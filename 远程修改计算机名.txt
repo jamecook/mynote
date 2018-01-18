@@ -1,0 +1,16 @@
+$TargetComp=Read-Host -Prompt "Enter the Name of the Computer you want to change the name of " #输入你想要修改的计算机名
+$Credential=Get-Credential
+$computerName = GWMI Win32_ComputerSystem -computername $TargetComp -Authentication 6
+Write-host "Current Computer Name is " $computerName
+$name = Read-Host -Prompt "Please Enter the ComputerName you want to use." #输入修改后使用的计算机名
+Write-host "New Computer Name " $Name
+$Go=Read-Host -prompt "Proceed with computer name change? (Y / N)" #输入Y，确认修改
+If(($Go-eq"Y")-or($Go-eq"y"))
+{
+$computername.Rename($name,$credential.GetNetworkCredential().Password,$credential.Username)  #输入客户端administrators组内用户验证，域和本地用户都可以。
+}
+$Reboot=Read-host -Prompt "Do you want to restart the computer? (Y / N)" #输入Y确认重启计算机
+If(($Reboot-eq"Y")-or($Reboot-eq"y"))
+{
+restart-computer -computername $TargetComp  #执行此命令时，客户端一定要注销状态，不能有用户登录，否则会报错不会自动重启。
+}
